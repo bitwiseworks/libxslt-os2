@@ -13,6 +13,11 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+OS2_LA_NAME=exslt
+OS2_DLL_NAME=exslt
+OS2_DLL_OBJ=$(libexslt_la_OBJECTS:%.lo=.libs/%.o)
+OS2_DLL_LIBS=-l../libxslt/.libs/xslt -lxml2 $(LIBS)
+
 @SET_MAKE@
 
 
@@ -572,7 +577,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(MANS) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(OS2_DLL_NAME).dll $(MANS) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(man3dir)" "$(DESTDIR)$(exsltincdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -698,3 +703,13 @@ uninstall-man: uninstall-man3
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
+
+$(OS2_DLL_NAME).dll: lib$(OS2_LA_NAME).la
+	cp .libs/$(OS2_LA_NAME).a .libs/$(OS2_LA_NAME)_s.a
+	echo "LIBRARY $(OS2_DLL_NAME) INITINSTANCE TERMINSTANCE" > $(OS2_DLL_NAME).def
+	echo "DATA MULTIPLE" >> $(OS2_DLL_NAME).def
+	echo "EXPORTS" >> $(OS2_DLL_NAME).def
+	emxexp $(OS2_DLL_OBJ) >> $(OS2_DLL_NAME).def
+	gcc -g -Zbin-files -Zhigh-mem -Zomf -Zdll $(OS2_DLL_NAME).def -o $@ $(OS2_DLL_OBJ) $(OS2_DLL_LIBS) 
+	emximp -o .libs/$(OS2_LA_NAME).a $(OS2_DLL_NAME).def
+	emximp -o .libs/$(OS2_LA_NAME).lib $(OS2_DLL_NAME).def
