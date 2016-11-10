@@ -6,14 +6,14 @@ $(top_builddir)/xsltproc/xsltproc:
 EXTRA_DIST = 							\
   dynmap.out     dynmap.xml     dynmap.xsl
 
-all:
+CLEANFILES = .memdump
 
 valgrind:
 	@echo '## Running the regression tests under Valgrind'
-	$(MAKE) CHECKER='valgrind -q' tests
+	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
 test tests: $(top_builddir)/xsltproc/xsltproc
-	@echo '## Running exslt sets tests'
+	@echo '## Running exslt dynamic tests'
 	@(echo > .memdump)
 	@(for i in $(srcdir)/*.xsl ; do \
 	  name=`basename $$i .xsl` ; \
@@ -40,7 +40,7 @@ test tests: $(top_builddir)/xsltproc/xsltproc
 	  grep "MORY ALLO" .memdump  | grep -v "MEMORY ALLOCATED : 0" || true`;\
 	  if [ -n "$$log" ] ; then \
 	  	echo $$name result ; \
-		echo $$log ; \
+		echo "$$log" ; \
 	  fi ; \
 	  rm -f $$name.res $$name.bad ; \
 	  done)

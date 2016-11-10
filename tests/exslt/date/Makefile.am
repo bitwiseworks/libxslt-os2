@@ -26,7 +26,7 @@ EXTRA_DIST = 						\
 	add-duration.1.out add-duration.1.xml add-duration.1.xsl \
 	add-duration.2.out add-duration.2.xml add-duration.2.xsl \
 	sum.1.out	sum.1.xml	sum.1.xsl	\
-	sum.2.out	sum.2.xml	sum.2.xsl	\
+	sum.2.out	sum.2.xml	sum.2.xsl	sum.2.err	\
 	difference.1.out difference.1.xml difference.1.xsl	\
 	difference.2.out difference.2.xml difference.2.xsl	\
 	duration.1.out	duration.1.xml	duration.1.xsl	\
@@ -34,7 +34,7 @@ EXTRA_DIST = 						\
 	seconds.1.out	seconds.1.xml	seconds.1.xsl	\
 	seconds.2.out	seconds.2.xml	seconds.2.xsl
 
-all:
+CLEANFILES = .memdump
 
 test-current:
 	@(echo > .memdump)
@@ -81,7 +81,7 @@ test tests: $(top_builddir)/xsltproc/xsltproc test-logall test-current
 	  grep "MORY ALLO" .memdump  | grep -v "MEMORY ALLOCATED : 0" || true`;\
 	  if [ -n "$$log" ] ; then \
 	  	echo $$name result ; \
-		echo $$log ; \
+		echo "$$log" ; \
 	  fi ; \
 	  rm -f $$name.res $$name.bad; \
 	  done)

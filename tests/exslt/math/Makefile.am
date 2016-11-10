@@ -17,11 +17,11 @@ EXTRA_DIST = 						\
 	min.1.out      min.1.xml      min.1.xsl		\
 	min.2.out      min.2.xml      min.2.xsl
 
-all:
+CLEANFILES = .memdump
 
 valgrind:
 	@echo '## Running the regression tests under Valgrind'
-	$(MAKE) CHECKER='valgrind -q' tests
+	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
 test tests: $(top_builddir)/xsltproc/xsltproc
 	@echo '## Running exslt math tests'
@@ -51,7 +51,7 @@ test tests: $(top_builddir)/xsltproc/xsltproc
 	  grep "MORY ALLO" .memdump  | grep -v "MEMORY ALLOCATED : 0" || true`;\
 	  if [ -n "$$log" ] ; then \
 	  	echo $$name result ; \
-		echo $$log ; \
+		echo "$$log" ; \
 	  fi ; \
 	  rm -f $$name.res $$name.bad ; \
 	  done)

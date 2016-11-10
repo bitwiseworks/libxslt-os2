@@ -5,11 +5,11 @@ $(top_builddir)/xsltproc/xsltproc:
 
 EXTRA_DIST = doc.xsl doc.xml doc.dtd result.xml
 
-all:
+CLEANFILES = .memdump
 
 valgrind:
 	@echo '## Running the regression tests under Valgrind'
-	$(MAKE) CHECKER='valgrind -q' tests
+	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
 # No special stuff here, just a single test that either works or doesn't!
 test tests: $(top_builddir)/xsltproc/xsltproc
