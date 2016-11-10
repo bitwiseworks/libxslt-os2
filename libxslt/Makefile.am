@@ -1,4 +1,6 @@
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libxslt $(LIBXML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/libxslt
+
+AM_CFLAGS = $(LIBXML_CFLAGS)
 
 lib_LTLIBRARIES = libxslt.la
 
@@ -23,9 +25,10 @@ xsltinc_HEADERS = 			\
 	transform.h			\
 	security.h			\
 	xsltInternals.h			\
-	xsltconfig.h			\
 	xsltexports.h			\
 	xsltlocale.h
+nodist_xsltinc_HEADERS = 		\
+	xsltconfig.h
 
 libxslt_la_SOURCES = 			\
 	attrvt.c			\
@@ -48,9 +51,10 @@ libxslt_la_SOURCES = 			\
 	transform.c			\
 	security.c			\
 	win32config.h			\
-	xsltwin32config.h		\
 	xsltwin32config.h.in		\
 	libxslt.h
+nodist_libxslt_la_SOURCES =		\
+	xsltwin32config.h
 
 if USE_VERSION_SCRIPT
 LIBXSLT_VERSION_SCRIPT = $(VERSION_SCRIPT_FLAGS)$(srcdir)/libxslt.syms
@@ -58,11 +62,11 @@ else
 LIBXSLT_VERSION_SCRIPT =
 endif
 
-libxslt_la_LIBADD = $(EXTRA_LIBS)
+libxslt_la_LIBADD = $(LIBXML_LIBS) $(EXTRA_LIBS)
 libxslt_la_LDFLAGS =					\
 		$(WIN32_EXTRA_LDFLAGS)			\
 		$(LIBXSLT_VERSION_SCRIPT)		\
-		-version-info @LIBXSLT_VERSION_INFO@
+		-version-info $(LIBXSLT_VERSION_INFO)
 
 man_MANS = libxslt.3
 
@@ -72,4 +76,4 @@ xsltproc: all
 	@(cd ../xsltproc ; $(MAKE))
 
 install-exec-hook:
-	$(mkinstalldirs) "$(DESTDIR)$(libdir)/libxslt-plugins"
+	$(MKDIR_P) "$(DESTDIR)$(libdir)/libxslt-plugins"

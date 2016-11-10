@@ -10,12 +10,11 @@ EXTRA_DIST = \
     result.xhtml system.xml test_bad.err test_bad.result \
     test_bad.xml test.result test.xml test.xsl worklog.xml
 
-
-all:
+CLEANFILES = .memdump
 
 valgrind:
 	@echo '## Running the regression tests under Valgrind'
-	$(MAKE) CHECKER='valgrind -q' tests
+	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
 test tests: $(top_builddir)/xsltproc/xsltproc
 	@(echo > .memdump)

@@ -168,10 +168,28 @@ EXTRA_DIST =	\
 	bug-167.xml \
 	bug-168.xml \
 	bug-169.xml \
+	bug-170.xml \
+	bug-171.xml \
+	bug-172.xml \
+	bug-173.xml \
+	bug-174.xml \
+	bug-175.xml \
+	bug-176.xml \
+	bug-177.xml \
+	bug-178.xml \
+	bug-179.xml \
+	bug-180.xml \
+	bug-181.xml \
+	bug-182.xml \
+	bug-183.xml \
+	bug-184.xml \
+	bug-185-data.xml \
+	bug-185.xml \
+	bug-186.xml \
+	bug-187.xml \
 	character.xml \
+	date_add.xml \
 	array.xml \
 	items.xml
-
-all:
 
 tests:

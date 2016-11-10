@@ -5,11 +5,11 @@ $(top_builddir)/xsltproc/xsltproc:
 
 EXTRA_DIST = data.xml vrml.xsl vrml.xml svg.xsl svg.xml	html.xsl html.xml
 
-all:
+CLEANFILES = .memdump
 
 valgrind:
 	@echo '## Running the regression tests under Valgrind'
-	$(MAKE) CHECKER='valgrind -q' tests
+	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
 # Just 3 specific files tested, they either work or don't!
 test tests: $(top_builddir)/xsltproc/xsltproc
