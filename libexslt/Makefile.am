@@ -1,3 +1,7 @@
+VENDOR ?=community
+BUILD_INFO=\#\#1\#\# $(shell date +'%d %b %Y %H:%M:%S')     $(shell uname -n)
+BUILDLEVEL_INFO=@\#$(VENDOR):$(LIBEXSLT_VERSION)\#@$(BUILD_INFO)::::$(LIBEXSLT_MICRO_VERSION)::
+
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/libxslt -I$(top_srcdir)/libexslt \
 	      -I$(top_builddir) -I$(top_builddir)/libxslt \
 	      -I$(top_builddir)/libexslt
@@ -28,7 +32,8 @@ libexslt_la_SOURCES =                   \
 	dynamic.c
 
 libexslt_la_LIBADD = $(top_builddir)/libxslt/libxslt.la $(EXTRA_LIBS) $(LIBGCRYPT_LIBS)
-libexslt_la_LDFLAGS = $(WIN32_EXTRA_LDFLAGS) -version-info $(LIBEXSLT_VERSION_INFO)
+libexslt_la_LDFLAGS = $(WIN32_EXTRA_LDFLAGS) -version-info $(LIBEXSLT_VERSION_INFO) \
+	-buildlevel '$(BUILDLEVEL_INFO)'
 
 man_MANS = libexslt.3
 

@@ -1,3 +1,7 @@
+VENDOR ?=community
+BUILD_INFO=\#\#1\#\# $(shell date +'%d %b %Y %H:%M:%S')     $(shell uname -n)
+BUILDLEVEL_INFO=@\#$(VENDOR):$(LIBXSLT_VERSION)\#@$(BUILD_INFO)::::$(LIBXSLT_MICRO_VERSION)::
+
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/libxslt
 
 AM_CFLAGS = $(LIBXML_CFLAGS)
@@ -66,7 +70,8 @@ libxslt_la_LIBADD = $(LIBXML_LIBS) $(EXTRA_LIBS)
 libxslt_la_LDFLAGS =					\
 		$(WIN32_EXTRA_LDFLAGS)			\
 		$(LIBXSLT_VERSION_SCRIPT)		\
-		-version-info $(LIBXSLT_VERSION_INFO)
+		-version-info $(LIBXSLT_VERSION_INFO)   \
+		-buildlevel '$(BUILDLEVEL_INFO)'
 
 man_MANS = libxslt.3
 
