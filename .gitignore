@@ -2,11 +2,18 @@
 *.o
 *.obj
 
-# configure and such
+# configure and such from autoreconf
 aclocal.m4
 config.guess
 config.sub
 configure
+autom4te.cache/
+compile
+config.h.in~
+depcomp
+install-sh
+ltmain.sh
+missing
 
 
 # Makefile.in
