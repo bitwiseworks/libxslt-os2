@@ -12,7 +12,7 @@ valgrind:
 	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
 # Just 3 specific files tested, they either work or don't!
-test tests: $(top_builddir)/xsltproc/xsltproc
+test tests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@echo '## Running REC2 tests'
 	@(echo > .memdump)
 	@($(CHECKER) $(top_builddir)/xsltproc/xsltproc $(srcdir)/vrml.xsl $(srcdir)/data.xml > vrml.res ; \

@@ -12,7 +12,7 @@ valgrind:
 	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
 # No special stuff here, just a single test that either works or doesn't!
-test tests: $(top_builddir)/xsltproc/xsltproc
+test tests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@echo '## Running REC1 tests'
 	@(echo > .memdump)
 	@($(CHECKER) $(top_builddir)/xsltproc/xsltproc \

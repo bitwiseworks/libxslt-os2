@@ -123,7 +123,7 @@ xtchunk:
 #
 # The full set of tests
 #
-htmltests: $(top_builddir)/xsltproc/xsltproc
+htmltests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@$(MKDIR_P) result/html
 	@(echo > .memdump)
 	@echo "##"

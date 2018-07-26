@@ -52,7 +52,7 @@ test-current:
 	    rm -f current.xml ; \
 	  fi)
 
-test tests: $(top_builddir)/xsltproc/xsltproc test-current
+test tests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT) test-current
 	@echo '## Running exslt date tests'
 	@(echo > .memdump)
 	@(for i in $(srcdir)/*.xsl ; do \

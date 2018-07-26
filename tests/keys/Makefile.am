@@ -11,7 +11,7 @@ valgrind:
 	@echo '## Running the regression tests under Valgrind'
 	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
-test tests: $(top_builddir)/xsltproc/xsltproc
+test tests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@echo '## Running keys tests'
 	@(echo > .memdump)
 	@($(CHECKER) $(top_builddir)/xsltproc/xsltproc $(srcdir)/month.xsl $(srcdir)/dates.xml > month.res ; \

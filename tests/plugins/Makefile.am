@@ -26,7 +26,7 @@ xmlsoft_org_xslt_testplugin_la_LDFLAGS = $(WIN32_EXTRA_LDFLAGS) -module -avoid-v
 test-logall:
 	@echo '## Running plugin tests'
 
-test tests: $(top_builddir)/xsltproc/xsltproc test-logall $(noinst_LTLIBRARIES)
+test tests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT) test-logall $(noinst_LTLIBRARIES)
 	@LD_LIBRARY_PATH=$(plugindir):$(top_builddir)/libxslt/.libs:$(LD_LIBRARY_PATH) \
 	 LIBXSLT_PLUGINS_PATH=$(plugindir) \
 	 $(top_builddir)/xsltproc/xsltproc plugin.xsl plugin.xml > plugin.res

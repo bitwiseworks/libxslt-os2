@@ -16,7 +16,7 @@ valgrind:
 	@echo '## Running the regression tests under Valgrind'
 	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
-test tests: $(top_builddir)/xsltproc/xsltproc
+test tests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@(echo > .memdump)
 	@($(CHECKER) $(top_builddir)/xsltproc/xsltproc $(srcdir)/bredfort.xsl $(srcdir)/index.xml > result ; \
 	diff $(srcdir)/result.xhtml result; \

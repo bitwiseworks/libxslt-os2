@@ -14,7 +14,7 @@ valgrind:
 	@echo '## Running the regression tests under Valgrind'
 	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
-test tests: $(top_builddir)/xsltproc/xsltproc
+test tests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@echo '## Running extensions tests'
 	@(echo > .memdump)
 	-@(for i in $(srcdir)/*.xml ; do \
