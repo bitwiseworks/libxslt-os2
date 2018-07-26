@@ -91,7 +91,7 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = libexslt
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(exsltinc_HEADERS) \
@@ -132,7 +132,8 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(man3dir)" \
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libexslt_la_DEPENDENCIES = $(top_builddir)/libxslt/libxslt.la \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_libexslt_la_OBJECTS = exslt.lo common.lo crypto.lo math.lo sets.lo \
 	functions.lo strings.lo date.lo saxon.lo dynamic.lo
 libexslt_la_OBJECTS = $(am_libexslt_la_OBJECTS)
@@ -283,7 +284,6 @@ LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
-MV = @MV@
 M_LIBS = @M_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
@@ -300,6 +300,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PYTHON = @PYTHON@
 PYTHONSODV = @PYTHONSODV@
 PYTHON_INCLUDES = @PYTHON_INCLUDES@
@@ -309,12 +312,10 @@ PYTHON_SUBDIR = @PYTHON_SUBDIR@
 PYTHON_VERSION = @PYTHON_VERSION@
 RANLIB = @RANLIB@
 RELDATE = @RELDATE@
-RM = @RM@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-TAR = @TAR@
 THREAD_LIBS = @THREAD_LIBS@
 VERSION = @VERSION@
 VERSION_SCRIPT_FLAGS = @VERSION_SCRIPT_FLAGS@
@@ -333,8 +334,6 @@ XSLTPROCDV = @XSLTPROCDV@
 XSLT_INCLUDEDIR = @XSLT_INCLUDEDIR@
 XSLT_LIBDIR = @XSLT_LIBDIR@
 XSLT_LIBS = @XSLT_LIBS@
-XSLT_LOCALE_WINAPI = @XSLT_LOCALE_WINAPI@
-XSLT_LOCALE_XLOCALE = @XSLT_LOCALE_XLOCALE@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -415,7 +414,7 @@ libexslt_la_SOURCES = \
 	libexslt.h			\
 	dynamic.c
 
-libexslt_la_LIBADD = $(top_builddir)/libxslt/libxslt.la $(EXTRA_LIBS) $(LIBGCRYPT_LIBS)
+libexslt_la_LIBADD = $(top_builddir)/libxslt/libxslt.la $(EXTRA_LIBS) $(LIBGCRYPT_LIBS) $(M_LIBS)
 libexslt_la_LDFLAGS = $(WIN32_EXTRA_LDFLAGS) -version-info $(LIBEXSLT_VERSION_INFO)
 man_MANS = libexslt.3
 EXTRA_DIST = $(man_MANS)
@@ -432,9 +431,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libexslt/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign libexslt/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libexslt/Makefile
+	  $(AUTOMAKE) --foreign libexslt/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \

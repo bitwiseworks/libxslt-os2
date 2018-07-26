@@ -91,7 +91,7 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = libxslt
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(xsltinc_HEADERS) \
@@ -131,7 +131,8 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(man3dir)" \
 	"$(DESTDIR)$(xsltincdir)" "$(DESTDIR)$(xsltincdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-libxslt_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+libxslt_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_libxslt_la_OBJECTS = attrvt.lo xslt.lo xsltlocale.lo xsltutils.lo \
 	pattern.lo templates.lo variables.lo keys.lo numbers.lo \
 	extensions.lo extra.lo functions.lo namespaces.lo imports.lo \
@@ -286,7 +287,6 @@ LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
-MV = @MV@
 M_LIBS = @M_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
@@ -303,6 +303,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PYTHON = @PYTHON@
 PYTHONSODV = @PYTHONSODV@
 PYTHON_INCLUDES = @PYTHON_INCLUDES@
@@ -312,12 +315,10 @@ PYTHON_SUBDIR = @PYTHON_SUBDIR@
 PYTHON_VERSION = @PYTHON_VERSION@
 RANLIB = @RANLIB@
 RELDATE = @RELDATE@
-RM = @RM@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-TAR = @TAR@
 THREAD_LIBS = @THREAD_LIBS@
 VERSION = @VERSION@
 VERSION_SCRIPT_FLAGS = @VERSION_SCRIPT_FLAGS@
@@ -336,8 +337,6 @@ XSLTPROCDV = @XSLTPROCDV@
 XSLT_INCLUDEDIR = @XSLT_INCLUDEDIR@
 XSLT_LIBDIR = @XSLT_LIBDIR@
 XSLT_LIBS = @XSLT_LIBS@
-XSLT_LOCALE_WINAPI = @XSLT_LOCALE_WINAPI@
-XSLT_LOCALE_XLOCALE = @XSLT_LOCALE_XLOCALE@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -449,7 +448,7 @@ nodist_libxslt_la_SOURCES = \
 
 @USE_VERSION_SCRIPT_FALSE@LIBXSLT_VERSION_SCRIPT = 
 @USE_VERSION_SCRIPT_TRUE@LIBXSLT_VERSION_SCRIPT = $(VERSION_SCRIPT_FLAGS)$(srcdir)/libxslt.syms
-libxslt_la_LIBADD = $(LIBXML_LIBS) $(EXTRA_LIBS)
+libxslt_la_LIBADD = $(LIBXML_LIBS) $(EXTRA_LIBS) $(M_LIBS)
 libxslt_la_LDFLAGS = \
 		$(WIN32_EXTRA_LDFLAGS)			\
 		$(LIBXSLT_VERSION_SCRIPT)		\
@@ -470,9 +469,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libxslt/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign libxslt/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libxslt/Makefile
+	  $(AUTOMAKE) --foreign libxslt/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
