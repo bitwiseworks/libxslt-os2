@@ -34,6 +34,10 @@
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #include <fcntl.h>
 #endif
+#ifdef __OS2__
+#include <fcntl.h>
+#include <io.h>
+#endif
 #include <libxml/xmlmemory.h>
 #include <libxml/debugXML.h>
 #include <libxml/HTMLtree.h>
@@ -560,7 +564,7 @@ main(int argc, char **argv)
     srand(time(NULL));
     xmlInitMemory();
 
-#if defined(_WIN32) && !defined(__CYGINW__)
+#if defined(_WIN32) && !defined(__CYGINW__) || defined(__OS2__)
     setmode(fileno(stdout), O_BINARY);
     setmode(fileno(stderr), O_BINARY);
 #endif
