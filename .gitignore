@@ -1,0 +1,47 @@
+# Object files
+*.o
+*.obj
+
+# configure and such
+aclocal.m4
+config.guess
+config.sub
+configure
+
+
+# Makefile.in
+Makefile.in
+doc/Makefile.in
+libexslt/Makefile.in
+libxslt/Makefile.in
+python/Makefile.in
+python/tests/Makefile.in
+tests/Makefile.in
+tests/REC/Makefile.in
+tests/REC1/Makefile.in
+tests/REC2/Makefile.in
+tests/XSLTMark/Makefile.in
+tests/docbook/Makefile.in
+tests/docs/Makefile.in
+tests/documents/Makefile.in
+tests/exslt/Makefile.in
+tests/exslt/common/Makefile.in
+tests/exslt/crypto/Makefile.in
+tests/exslt/date/Makefile.in
+tests/exslt/dynamic/Makefile.in
+tests/exslt/functions/Makefile.in
+tests/exslt/math/Makefile.in
+tests/exslt/saxon/Makefile.in
+tests/exslt/sets/Makefile.in
+tests/exslt/strings/Makefile.in
+tests/extensions/Makefile.in
+tests/general/Makefile.in
+tests/keys/Makefile.in
+tests/multiple/Makefile.in
+tests/namespaces/Makefile.in
+tests/numbers/Makefile.in
+tests/plugins/Makefile.in
+tests/reports/Makefile.in
+tests/xinclude/Makefile.in
+tests/xmlspec/Makefile.in
+xsltproc/Makefile.in
