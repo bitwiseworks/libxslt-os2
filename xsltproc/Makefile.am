@@ -38,7 +38,7 @@ $(top_builddir)/libexslt/libexslt.la: $(top_builddir)/libxslt/libxslt.la
 xsltproc.dv: xsltproc.o
 	$(CC) $(CFLAGS) -o xsltproc xsltproc.o ../libexslt/.libs/libexslt.a ../libxslt/.libs/libxslt.a $(LIBXML_LIBS) $(EXTRA_LIBS) $(LIBGCRYPT_LIBS)
 
-tests: testThreads
+tests: testThreads$(EXEEXT)
 	@echo > .memdump
 	@echo '## Running testThreads'
 	@($(CHECKER) ./testThreads > /dev/null; grep "MORY ALLO" .memdump  | grep -v "MEMORY ALLOCATED : 0" || true)
