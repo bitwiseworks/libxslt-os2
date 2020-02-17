@@ -3,7 +3,7 @@
 $(top_builddir)/xsltproc/xsltproc:
 	@(cd ../../../xsltproc ; $(MAKE) xsltproc)
 
-EXTRA_DIST = plugin.out	plugin.xml plugin.xsl
+EXTRA_DIST = $(top_srcdir)/tests/plugins/plugin.out	plugin.xml plugin.xsl
 
 AM_CPPFLAGS = -I$(top_srcdir) -I../../libxslt
 
@@ -27,11 +27,14 @@ test-logall:
 	@echo '## Running plugin tests'
 
 test tests: $(top_builddir)/xsltproc/xsltproc$(EXEEXT) test-logall $(noinst_LTLIBRARIES)
+	@rm -f ./.libs/xmlsoft_org_xslt_testplugin.dll
+	@ln -s xmlsoft_.dll ./.libs/xmlsoft_org_xslt_testplugin.dll
 	@LD_LIBRARY_PATH=$(plugindir):$(top_builddir)/libxslt/.libs:$(LD_LIBRARY_PATH) \
 	 LIBXSLT_PLUGINS_PATH=$(plugindir) \
 	 $(top_builddir)/xsltproc/xsltproc plugin.xsl plugin.xml > plugin.res
-	@diff plugin.out plugin.res
+	@diff $(top_srcdir)/tests/plugins/plugin.out plugin.res
 	@rm plugin.res
+	@rm -f ./.libs/xmlsoft_org_xslt_testplugin.dll
 
 else
 
