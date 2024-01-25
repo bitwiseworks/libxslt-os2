@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-$(top_builddir)/xsltproc/xsltproc:
-	@(cd ../../xsltproc ; $(MAKE) xsltproc)
+$(top_builddir)/xsltproc/xsltproc$(EXEEXT):
+	@(cd ../../xsltproc ; $(MAKE) xsltproc$(EXEEXT))
 
 EXTRA_DIST =		\
 	e.xml		\
@@ -13,7 +13,7 @@ EXTRA_DIST =		\
 
 CLEANFILES = .memdump
 
-check-local: $(top_builddir)/xsltproc/xsltproc
+check-local: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@echo '## Running XInclude test'
 	@(echo > .memdump)
 	@($(CHECKER) $(top_builddir)/xsltproc/xsltproc $(srcdir)/e.xsl $(srcdir)/e.xml > res ; \

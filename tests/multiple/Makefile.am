@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-$(top_builddir)/xsltproc/xsltproc:
-	@(cd ../../xsltproc ; $(MAKE) xsltproc)
+$(top_builddir)/xsltproc/xsltproc$(EXEEXT):
+	@(cd ../../xsltproc ; $(MAKE) xsltproc$(EXEEXT))
 
 EXTRA_DIST = dict.dtd  dict.xml  dict.xsl result.xml \
     out/lettera.orig out/letterb.orig \
@@ -30,7 +30,7 @@ GENERATED = \
 
 CLEANFILES = .memdump
 
-check-local: $(top_builddir)/xsltproc/xsltproc
+check-local: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@echo '## Running multiple tests'
 	@(echo > .memdump)
 	@($(CHECKER) $(top_builddir)/xsltproc/xsltproc $(srcdir)/dict.xsl $(srcdir)/dict.xml > dict.res ; \

@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-$(top_builddir)/xsltproc/xsltproc:
-	@(cd ../../xsltproc ; $(MAKE) xsltproc)
+$(top_builddir)/xsltproc/xsltproc$(EXEEXT):
+	@(cd ../../xsltproc ; $(MAKE) xsltproc$(EXEEXT))
 
 EXTRA_DIST = REC-xml-20001006.xml xmlspec-v21.dtd W3C-REC.css \
              logo-REC xmlspec.xsl REC-xml-2e.xsl diffspec.xsl \
@@ -9,7 +9,7 @@ EXTRA_DIST = REC-xml-20001006.xml xmlspec-v21.dtd W3C-REC.css \
 
 CLEANFILES = .memdump debug
 
-check-local: $(top_builddir)/xsltproc/xsltproc
+check-local: $(top_builddir)/xsltproc/xsltproc$(EXEEXT)
 	@echo '## Running xmlspec tests'
 	@(echo > .memdump)
 	@log=`$(CHECKER) $(top_builddir)/xsltproc/xsltproc -timing \
