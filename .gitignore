@@ -42,6 +42,7 @@ tests/exslt/saxon/Makefile.in
 tests/exslt/sets/Makefile.in
 tests/exslt/strings/Makefile.in
 tests/extensions/Makefile.in
+tests/fuzz/Makefile.in
 tests/general/Makefile.in
 tests/keys/Makefile.in
 tests/multiple/Makefile.in
