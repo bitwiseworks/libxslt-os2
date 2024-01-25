@@ -82,7 +82,7 @@ static int profile = 0;
 
 #define MAX_PARAMETERS 64
 #define MAX_PATHS 64
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__OS2__)
 # define PATH_SEPARATOR ';'
 #else
 # define PATH_SEPARATOR ':'
@@ -562,7 +562,7 @@ main(int argc, char **argv)
                    (!strcmp(argv[i], "-output")) ||
                    (!strcmp(argv[i], "--output"))) {
             i++;
-#if defined(_WIN32) || defined (__CYGWIN__)
+#if defined(_WIN32) || defined (__CYGWIN__) || defined(__OS2__)
 	    output = (char *) xmlCanonicPath((xmlChar *) argv[i]);
             if (output == NULL)
 #endif
