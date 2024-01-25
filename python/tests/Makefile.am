@@ -1,39 +1,28 @@
-EXAMPLE_DIR = $(datadir)/doc/libxslt-python-$(LIBXSLT_VERSION)/examples
-
-TESTSPY=	\
+if WITH_PYTHON
+TESTSPY =	\
     basic.py	\
     exslt.py	\
     extelem.py	\
     extfunc.py
 
-XMLS=		\
-    test.xml	\
-    test.xsl
+exampledir = $(docdir)/python/examples
+dist_example_DATA = test.xml test.xsl pyxsltproc.py setup_test.py $(TESTSPY)
 
-EXTRAS=		\
-    pyxsltproc.py
-
-EXTRA_DIST = $(TESTSPY) $(XMLS) $(EXTRAS)
-
-CLEANFILES = *.pyc core
-
-if WITH_PYTHON
-tests: $(TESTSPY)
-	@(PYTHONPATH="`pwd`/..:`pwd`/../.libs:$(srcdir)/.."; \
+check-local: $(TESTSPY)
+	@(export PYTHONPATH="..:../.libs:$(srcdir)/..:$$PYTHONPATH"; \
+	  export LD_LIBRARY_PATH="$(top_builddir)/libxslt/.libs:$(top_builddir)/libexslt/.libs:$$LD_LIBRARY_PATH"; \
+	  export DYLD_LIBRARY_PATH="$(top_builddir)/libxslt/.libs:$(top_builddir)/libexslt/.libs:$$DYLD_LIBRARY_PATH"; \
+	  export PATH="$(top_builddir)/libxslt/.libs:$(top_builddir)/libexslt/.libs:$$PATH" ; \
 	  if test "x$(LIBXML_SRC)" != "x" ; then \
-            PYTHONPATH="$$PYTHONPATH:$(LIBXML_SRC)/python:$(LIBXML_SRC)/python/.libs"; \
+            PYTHONPATH="$(LIBXML_SRC)/python:$(LIBXML_SRC)/python/.libs:$$PYTHONPATH"; \
+	    LD_LIBRARY_PATH="$(LIBXML_SRC)/.libs:$$LD_LIBRARY_PATH"; \
+	    DYLD_LIBRARY_PATH="$(LIBXML_SRC)/.libs:$$DYLD_LIBRARY_PATH"; \
+	    PATH="$(LIBXML_SRC)/.libs:$$PATH" ; \
           fi; \
-	  export PYTHONPATH; \
 	  for test in $(TESTSPY) ; do \
 	    echo "-- $$test" ; \
-	    (cd $(srcdir) && $(PYTHON) $$test ) || exit 1; \
+	    LIBXML_SRC="$(LIBXML_SRC)" $(PYTHON) $(srcdir)/$$test; \
 	  done)
-else
-tests:
 endif
 
-install-data-local:
-	$(MKDIR_P) $(DESTDIR)$(EXAMPLE_DIR)
-	-(for test in $(TESTSPY) $(XMLS) $(EXTRAS); \
-	  do $(INSTALL) -m 0644 $(srcdir)/$$test $(DESTDIR)$(EXAMPLE_DIR) ; done)
-
+CLEANFILES = *.pyc core

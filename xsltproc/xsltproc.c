@@ -9,15 +9,15 @@
 #include "libxslt/libxslt.h"
 #include "libxslt/xsltconfig.h"
 #include "libexslt/exslt.h"
+
 #include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif
+#include <stdlib.h>
+#include <stdarg.h>
+#include <time.h>
+
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#endif
-#ifdef HAVE_TIME_H
-#include <time.h>
 #endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -25,13 +25,7 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
-#ifdef HAVE_STDARG_H
-#include <stdarg.h>
-#endif
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32)
 #include <fcntl.h>
 #endif
 #include <libxml/xmlmemory.h>
@@ -57,17 +51,13 @@
 
 #include <libexslt/exsltconfig.h>
 
-#if defined(HAVE_SYS_TIME_H)
-#include <sys/time.h>
-#elif defined(HAVE_TIME_H)
-#include <time.h>
-#endif
-
 #ifdef HAVE_SYS_TIMEB_H
 #include <sys/timeb.h>
 #endif
 
+#ifdef LIBXML_DEBUG_ENABLED
 static int debug = 0;
+#endif
 static int repeat = 0;
 static int timing = 0;
 static int dumpextensions = 0;
@@ -88,6 +78,11 @@ static int profile = 0;
 
 #define MAX_PARAMETERS 64
 #define MAX_PATHS 64
+#ifdef _WIN32
+# define PATH_SEPARATOR ';'
+#else
+# define PATH_SEPARATOR ':'
+#endif
 
 static int options = XSLT_PARSE_OPTIONS;
 static const char *params[MAX_PARAMETERS + 1];
@@ -103,6 +98,7 @@ static const char *writesubtree = NULL;
 /*
  * Entity loading control and customization.
  */
+
 static
 void parsePath(const xmlChar *path) {
     const xmlChar *cur;
@@ -115,10 +111,10 @@ void parsePath(const xmlChar *path) {
 	    return;
 	}
 	cur = path;
-	while ((*cur == ' ') || (*cur == ':'))
+	while ((*cur == ' ') || (*cur == PATH_SEPARATOR))
 	    cur++;
 	path = cur;
-	while ((*cur != 0) && (*cur != ' ') && (*cur != ':'))
+	while ((*cur != 0) && (*cur != ' ') && (*cur != PATH_SEPARATOR))
 	    cur++;
 	if (cur != path) {
 	    paths[nbpaths] = xmlStrndup(path, cur - path);
@@ -259,16 +255,13 @@ static void endTimer(const char *format, ...)
     msec *= 1000;
     msec += (endtime.tv_usec - begin.tv_usec) / 1000;
 
-#ifndef HAVE_STDARG_H
-#error "endTimer required stdarg functions"
-#endif
     va_start(ap, format);
     vfprintf(stderr,format,ap);
     va_end(ap);
 
     fprintf(stderr, " took %ld ms\n", msec);
 }
-#elif defined(HAVE_TIME_H)
+#else
 /*
  * No gettimeofday function, so we have to make do with calling clock.
  * This is obviously less accurate, but there's little we can do about
@@ -291,39 +284,10 @@ static void endTimer(const char *format, ...)
     endtime=clock();
     msec = ((endtime-begin) * 1000) / CLOCKS_PER_SEC;
 
-#ifndef HAVE_STDARG_H
-#error "endTimer required stdarg functions"
-#endif
     va_start(ap, format);
     vfprintf(stderr,format,ap);
     va_end(ap);
     fprintf(stderr, " took %ld ms\n", msec);
-}
-#else
-/*
- * We don't have a gettimeofday or time.h, so we just don't do timing
- */
-static void startTimer(void)
-{
-  /*
-   * Do nothing
-   */
-}
-static void endTimer(const char *format, ...)
-{
-  /*
-   * We cannot do anything because we don't have a timing function
-   */
-#ifdef HAVE_STDARG_H
-    va_start(ap, format);
-    vfprintf(stderr,format,ap);
-    va_end(ap);
-    fprintf(stderr, " was not timed\n");
-#else
-  /* We don't have gettimeofday, time or stdarg.h, what crazy world is
-   * this ?!
-   */
-#endif
 }
 #endif
 
@@ -513,6 +477,8 @@ static void usage(const char *name) {
     printf("\t--maxdepth val : increase the maximum depth (default %d)\n", xsltMaxDepth);
     printf("\t--maxvars val : increase the maximum variables (default %d)\n", xsltMaxVars);
     printf("\t--maxparserdepth val : increase the maximum parser depth\n");
+    printf("\t--huge: relax any hardcoded limit from the parser\n");
+    printf("\t             fixes \"parser error : internal error: Huge input lookup\"\n");
     printf("\t--seed-rand val : initialize pseudo random number generator with specific seed\n");
 #ifdef LIBXML_HTML_ENABLED
     printf("\t--html: the input document is(are) an HTML file(s)\n");
@@ -540,8 +506,7 @@ static void usage(const char *name) {
 #endif
     printf("\t--load-trace : print trace of all external entites loaded\n");
     printf("\t--profile or --norman : dump profiling information \n");
-    printf("\nProject libxslt home page: http://xmlsoft.org/XSLT/\n");
-    printf("To report bugs and get help: http://xmlsoft.org/XSLT/bugs.html\n");
+    printf("\nProject libxslt home page: https://gitlab.gnome.org/GNOME/libxslt\n");
 }
 
 int
@@ -558,7 +523,6 @@ main(int argc, char **argv)
     }
 
     srand(time(NULL));
-    xmlInitMemory();
 
 #if defined(_WIN32) && !defined(__CYGINW__)
     setmode(fileno(stdout), O_BINARY);
@@ -770,6 +734,9 @@ main(int argc, char **argv)
                 if (value > 0)
                     xmlParserMaxDepth = value;
             }
+        } else if ((!strcmp(argv[i], "-huge")) ||
+                   (!strcmp(argv[i], "--huge"))) {
+            options |= XML_PARSE_HUGE;
         } else if ((!strcmp(argv[i], "-seed-rand")) ||
                    (!strcmp(argv[i], "--seed-rand"))) {
             int value;

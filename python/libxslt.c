@@ -58,7 +58,11 @@ __inline int c99_vsnprintf(char *outBuf, size_t size, const char *format, va_lis
 /* #define DEBUG_EXTENSIONS */
 /* #define DEBUG_EXTENSIONS */
 
+#if PY_MAJOR_VERSION >= 3
+PyObject* PyInit_libxsltmod(void);
+#else
 void initlibxsltmod(void);
+#endif
 
 /************************************************************************
  *									*
@@ -77,8 +81,7 @@ libxslt_xsltStylesheetPtrWrap(xsltStylesheetPtr style) {
 	Py_INCREF(Py_None);
 	return(Py_None);
     }
-    ret = PyCObject_FromVoidPtrAndDesc((void *) style,
-	                               (char *)"xsltStylesheetPtr", NULL);
+    ret = PyCapsule_New((void *) style, (char *)"xsltStylesheetPtr", NULL);
 
     return(ret);
 }
@@ -94,8 +97,8 @@ libxslt_xsltTransformContextPtrWrap(xsltTransformContextPtr ctxt) {
 	Py_INCREF(Py_None);
 	return(Py_None);
     }
-    ret = PyCObject_FromVoidPtrAndDesc((void *) ctxt,
-	                               (char *)"xsltTransformContextPtr", NULL);
+    ret = PyCapsule_New((void *) ctxt, (char *)"xsltTransformContextPtr",
+                        NULL);
     return(ret);
 }
 
@@ -110,8 +113,7 @@ libxslt_xsltElemPreCompPtrWrap(xsltElemPreCompPtr ctxt) {
 	Py_INCREF(Py_None);
 	return(Py_None);
     }
-    ret = PyCObject_FromVoidPtrAndDesc((void *) ctxt,
-	                               (char *)"xsltElemPreCompPtr", NULL);
+    ret = PyCapsule_New((void *) ctxt, (char *)"xsltElemPreCompPtr", NULL);
     return(ret);
 }
 
@@ -129,7 +131,7 @@ libxslt_xsltGetTransformContextHashCode(PyObject *self ATTRIBUTE_UNUSED, PyObjec
     tctxt =  (xsltTransformContextPtr) PytransformCtxt_Get(py_tctxt);
     hash_code = (ptrdiff_t) tctxt;
 
-    ret = PyInt_FromLong(hash_code);
+    ret = PyLong_FromLong(hash_code);
     return ret;
 }
 
@@ -166,7 +168,7 @@ libxslt_xsltGetStylesheetHashCode(PyObject *self ATTRIBUTE_UNUSED, PyObject *arg
     style =  (xsltStylesheetPtr) Pystylesheet_Get(py_style);
     hash_code = (ptrdiff_t) style;
 
-    ret = PyInt_FromLong(hash_code);
+    ret = PyLong_FromLong(hash_code);
     return ret;
 }
 
@@ -301,7 +303,7 @@ libxslt_xsltElementPreCompCallback(xsltStylesheetPtr style, xmlNodePtr inst,
 	    pyobj_element_f);
 
     Py_INCREF(pyobj_precomp_f); /* Protect refcount against reentrant manipulation of callback hash */
-    result = PyEval_CallObject(pyobj_precomp_f, args);
+    result = PyObject_CallObject(pyobj_precomp_f, args);
     Py_DECREF(pyobj_precomp_f);
     Py_DECREF(args);
 
@@ -359,7 +361,7 @@ libxslt_xsltElementTransformCallback(xsltTransformContextPtr ctxt,
 	libxslt_xsltElemPreCompPtrWrap(comp));
 
     Py_INCREF(func); /* Protect refcount against reentrant manipulation of callback hash */
-    result = PyEval_CallObject(func, args);
+    result = PyObject_CallObject(func, args);
     Py_DECREF(func);
     Py_DECREF(args);
 
@@ -470,7 +472,7 @@ libxslt_xmlXPathFuncCallback(xmlXPathParserContextPtr ctxt, int nargs) {
     }
 
     Py_INCREF(current_function);
-    result = PyEval_CallObject(current_function, list);
+    result = PyObject_CallObject(current_function, list);
     Py_DECREF(current_function);
     Py_DECREF(list);
 
@@ -620,12 +622,13 @@ libxslt_xsltSetLoaderFunc(PyObject *self ATTRIBUTE_UNUSED, PyObject *args) {
     pythonDocLoaderObject = loader;
     xsltSetLoaderFunc(pythonDocLoaderFuncWrapper);
 
-    py_retval = PyInt_FromLong(0);
+    py_retval = PyLong_FromLong(0);
     return(py_retval);
 }
 
 PyObject *
-libxslt_xsltGetLoaderFunc(void) {
+libxslt_xsltGetLoaderFunc(PyObject *self ATTRIBUTE_UNUSED,
+	                  PyObject *args ATTRIBUTE_UNUSED) {
     PyObject *py_retval;
 
     py_retval = pythonDocLoaderObject;
@@ -689,7 +692,7 @@ libxslt_xsltApplyStylesheetUser(PyObject *self ATTRIBUTE_UNUSED, PyObject *args)
     PyObject *pyobj_transformCtxt;
     const char **params = NULL;
     int len = 0, i, j;
-    ssize_t ppos = 0;
+    Py_ssize_t ppos = 0;
     PyObject *name;
     PyObject *value;
 
@@ -711,14 +714,27 @@ libxslt_xsltApplyStylesheetUser(PyObject *self ATTRIBUTE_UNUSED, PyObject *args)
 		j = 0;
 		while (PyDict_Next(pyobj_params, &ppos, &name, &value)) {
 		    const char *tmp;
-		    int size;
+
+#if PY_MAJOR_VERSION >= 3
+		    Py_ssize_t size;
+
+		    tmp = PyUnicode_AsUTF8AndSize(name, &size);
+#else
+                    int size;
 
 		    tmp = PyString_AS_STRING(name);
 		    size = PyString_GET_SIZE(name);
+#endif
 		    params[j * 2] = (char *) xmlCharStrndup(tmp, size);
+
+#if PY_MAJOR_VERSION >= 3
+		    if (PyUnicode_Check(value)) {
+			tmp = PyUnicode_AsUTF8AndSize(value, &size);
+#else
 		    if (PyString_Check(value)) {
 			tmp = PyString_AS_STRING(value);
 			size = PyString_GET_SIZE(value);
+#endif
 			params[(j * 2) + 1] = (char *)
 			    xmlCharStrndup(tmp, size);
 		    } else {
@@ -764,7 +780,7 @@ libxslt_xsltApplyStylesheet(PyObject *self ATTRIBUTE_UNUSED, PyObject *args) {
     PyObject *pyobj_params;
     const char **params = NULL;
     int len = 0, i, j, params_size;
-    ssize_t ppos = 0;
+    Py_ssize_t ppos = 0;
     PyObject *name;
     PyObject *value;
 
@@ -787,14 +803,26 @@ libxslt_xsltApplyStylesheet(PyObject *self ATTRIBUTE_UNUSED, PyObject *args) {
 		j = 0;
 		while (PyDict_Next(pyobj_params, &ppos, &name, &value)) {
 		    const char *tmp;
+#if PY_MAJOR_VERSION >= 3
+		    Py_ssize_t size;
+
+		    tmp = PyUnicode_AsUTF8AndSize(name, &size);
+#else
 		    int size;
 
 		    tmp = PyString_AS_STRING(name);
 		    size = PyString_GET_SIZE(name);
+#endif
 		    params[j * 2] = (char *) xmlCharStrndup(tmp, size);
+
+#if PY_MAJOR_VERSION >= 3
+		    if (PyUnicode_Check(value)) {
+			tmp = PyUnicode_AsUTF8AndSize(value, &size);
+#else
 		    if (PyString_Check(value)) {
 			tmp = PyString_AS_STRING(value);
 			size = PyString_GET_SIZE(value);
+#endif
 			params[(j * 2) + 1] = (char *)
 			    xmlCharStrndup(tmp, size);
 		    } else {
@@ -859,11 +887,19 @@ libxslt_xsltSaveResultToString(PyObject *self ATTRIBUTE_UNUSED, PyObject *args) 
     if(size)
       {
       buffer[size] = '\0';
+#if PY_MAJOR_VERSION >= 3
+      py_retval = PyUnicode_DecodeUTF8((char *) buffer, size, NULL);
+#else
       py_retval = PyString_FromString((char *) buffer);
+#endif
       xmlFree(buffer);
       }
     else
+#if PY_MAJOR_VERSION >= 3
+      py_retval = PyUnicode_DecodeUTF8("", 0, NULL);
+#else
       py_retval = PyString_FromString("");
+#endif
     return(py_retval);
  FAIL:
     return(0);
@@ -930,7 +966,7 @@ libxslt_xsltErrorFuncHandler(void *ctx ATTRIBUTE_UNUSED, const char *msg,
         Py_XINCREF(libxslt_xsltPythonErrorFuncCtxt);
         message = libxml_charPtrWrap(str);
         PyTuple_SetItem(list, 1, message);
-        result = PyEval_CallObject(libxslt_xsltPythonErrorFuncHandler, list);
+        result = PyObject_CallObject(libxslt_xsltPythonErrorFuncHandler, list);
         Py_XDECREF(list);
         Py_XDECREF(result);
     }
@@ -1197,31 +1233,62 @@ static PyMethodDef libxsltMethods[] = {
 };
 
 #ifdef MERGED_MODULES
-extern void initlibxml2mod(void);
+#if PY_MAJOR_VERSION >= 3
+PyObject* PyInit_libxml2mod(void);
+#else
+void initlibxml2mod(void);
+#endif
 #endif
 
+#if PY_MAJOR_VERSION >= 3
+#define INITERROR return NULL
+
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "libxsltmod",
+    NULL,
+    -1,
+    libxsltMethods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
+#else
+#define INITERROR return
+#endif
+
+#if PY_MAJOR_VERSION >= 3
+PyObject* PyInit_libxsltmod(void){
+#else
 void initlibxsltmod(void) {
-    static int initialized = 0;
+#endif
+    PyObject *m;
 
 #ifdef MERGED_MODULES
+#if PY_MAJOR_VERSION >= 3
+    PyInit_libxml2mod();
+#else
     initlibxml2mod();
 #endif
+#endif
 
-    if (initialized != 0)
-	return;
-    Py_InitModule((char *)"libxsltmod", libxsltMethods);
-    initialized = 1;
+#if PY_MAJOR_VERSION >= 3
+    m = PyModule_Create(&moduledef);
+#else
+    m = Py_InitModule((char *)"libxsltmod", libxsltMethods);
+#endif
+    if (!m)
+	INITERROR;
     /*
      * Specific XSLT initializations
      */
     libxslt_xsltErrorInitialize();
-    xmlInitMemory();
-    xmlLoadExtDtdDefaultValue = XML_DETECT_IDS | XML_COMPLETE_ATTRS;
-    xmlDefaultSAXHandler.cdataBlock = NULL;
     /*
      * Register the EXSLT extensions and the test module
      */
     exsltRegisterAll();
+#if PY_MAJOR_VERSION >= 3
+    return m;
+#endif
 }
-
-
