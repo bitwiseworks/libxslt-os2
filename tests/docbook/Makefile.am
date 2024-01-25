@@ -1,12 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-tests:
+check-local:
 	@$(MAKE) single
 	@$(MAKE) xtchunk
-
-valgrind:
-	@echo '## Running the regression tests under Valgrind'
-	$(MAKE) CHECKER='libtool --mode=execute valgrind -q --leak-check=full' tests
 
 $(top_builddir)/xsltproc/xsltproc:
 	@(cd ../../xsltproc ; $(MAKE) xsltproc)
@@ -186,4 +182,4 @@ xhtmltests: $(top_builddir)/xsltproc/xsltproc
 	  rm -f $$out ; done )
 
 dist-hook:
-	@(cd $(srcdir) ; tar -cf - --exclude CVS --exclude .svn common html dtd lib xhtml fo doc images template htmlhelp result test) | (cd $(distdir); tar xf -)
+	@(cd $(srcdir) ; tar -cf - common html dtd lib xhtml fo doc images template htmlhelp result test) | (cd $(distdir); tar xf -)

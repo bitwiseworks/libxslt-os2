@@ -151,7 +151,7 @@ xsltEvalXPathStringNs(xsltTransformContextPtr ctxt, xmlXPathCompExprPtr comp,
     if (res != NULL) {
 	if (res->type != XPATH_STRING)
 	    res = xmlXPathConvertString(res);
-	if (res->type == XPATH_STRING) {
+	if ((res != NULL) && (res->type == XPATH_STRING)) {
             ret = res->stringval;
 	    res->stringval = NULL;
 	} else {
@@ -210,6 +210,8 @@ xsltEvalTemplateString(xsltTransformContextPtr ctxt,
 {
     xmlNodePtr oldInsert, insert = NULL;
     xmlChar *ret;
+    const xmlChar *oldLastText;
+    int oldLastTextSize, oldLastTextUse;
 
     if ((ctxt == NULL) || (contextNode == NULL) || (inst == NULL) ||
         (inst->type != XML_ELEMENT_NODE))
@@ -227,18 +229,24 @@ xsltEvalTemplateString(xsltTransformContextPtr ctxt,
     insert = xmlNewDocNode(ctxt->output, NULL,
 	                   (const xmlChar *)"fake", NULL);
     if (insert == NULL) {
-	xsltTransformError(ctxt, NULL, contextNode,
+	xsltTransformError(ctxt, NULL, inst,
 		"Failed to create temporary node\n");
 	return(NULL);
     }
     oldInsert = ctxt->insert;
     ctxt->insert = insert;
+    oldLastText = ctxt->lasttext;
+    oldLastTextSize = ctxt->lasttsize;
+    oldLastTextUse = ctxt->lasttuse;
     /*
     * OPTIMIZE TODO: if inst->children consists only of text-nodes.
     */
     xsltApplyOneTemplate(ctxt, contextNode, inst->children, NULL, NULL);
 
     ctxt->insert = oldInsert;
+    ctxt->lasttext = oldLastText;
+    ctxt->lasttsize = oldLastTextSize;
+    ctxt->lasttuse = oldLastTextUse;
 
     ret = xmlNodeGetContent(insert);
     if (insert != NULL)

@@ -1,5 +1,6 @@
-#!/usr/bin/python -u
+#!/usr/bin/env python
 import sys
+import setup_test
 import libxml2
 # Memory debug specific
 libxml2.debugMemory(1)
@@ -44,14 +45,14 @@ expect="""<?xml version="1.0"?>
 """
 
 if stringval != expect:
-  print "Exslt processing failed"
+  print("Exslt processing failed")
   sys.exit(255)
-    
+
 # Memory debug specific
 libxslt.cleanup()
 if libxml2.debugMemory(1) == 0:
-    print "OK"
+    print("OK")
 else:
-    print "Memory leak %d bytes" % (libxml2.debugMemory(1))
+    print("Memory leak %d bytes" % (libxml2.debugMemory(1)))
     libxml2.dumpMemory()
     sys.exit(255)
